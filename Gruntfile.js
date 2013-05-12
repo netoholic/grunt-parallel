@@ -19,6 +19,10 @@ module.exports = function(grunt) {
     throw new Error('Broken!');
   });
 
+  grunt.registerTask('logStuff', function() {
+    grunt.log.writeln('hey, I am logging live.');
+  });
+
   // Project configuration.
   grunt.initConfig({
     parallel: {
@@ -30,7 +34,8 @@ module.exports = function(grunt) {
           grunt: true,
           args: ['block']
         }, {
-          cmd: 'pwd'
+          cmd: 'netstat',
+          showLog: true
         },{
           grunt: true,
           args: ['fast']
@@ -44,6 +49,29 @@ module.exports = function(grunt) {
       grunt: {
         grunt: true,
         tasks: ['fast', 'block', 'fast']
+      },
+      withLog: {
+        grunt: true,
+        tasks: [
+          {
+            task: 'fast',
+            showLog: false
+          },
+          {
+            task: 'block',
+            showLog: false
+          },
+          {
+            task: 'watch',
+            showLog: true
+          }
+        ]
+      }
+    },
+    watch: {
+      scripts: {
+        files: ['Gruntfile.js'],
+        tasks: ['logStuff']
       }
     }
   });
@@ -51,6 +79,7 @@ module.exports = function(grunt) {
   // Load local tasks.
   grunt.loadTasks('tasks');
   
+  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.registerTask('default', ['parallel']);
 
 };

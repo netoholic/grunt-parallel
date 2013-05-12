@@ -13,6 +13,13 @@ module.exports = function(grunt) {
   function spawn(task) {
     var deferred = Q.defer();
 
+    // Inherit the standard input and output so that the task output is visible in the terminal
+    if ( task.showLog ) {
+      task.opts = {
+        stdio: 'inherit'
+      };
+    }
+
     grunt.util.spawn(task, function(error, result, code) {
       if (error || code !== 0) {
         var message = result.stderr || result.stdout;
@@ -38,8 +45,9 @@ module.exports = function(grunt) {
     if (this.data.grunt === true) {
       this.data.tasks = this.data.tasks.map(function(task) {
         return {
-          args: task,
-          grunt: true
+          args: task.task || task,
+          grunt: true,
+          showLog: task.showLog && true
         }
       });
     }
